@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Método CineIA Pro</title>
+<meta name="theme-color" content="#0b0b0d">
+<style>
+/* Mismo sistema que la home: Arial, negros #0b0b0d / #111114, papel #e9e8e4, acento rojo */
+:root{color-scheme:dark;--ink:#0b0b0d;--ink2:#111114;--paper:#e9e8e4;--card:#d8d7d4;--text:#f4f2ef;--muted:#bdbbc2;
+ --red:#D92200;--tangelo:#F3500A;--orange:#F37100;--gut:clamp(24px,6.5vw,120px)}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{scroll-behavior:smooth;background:var(--ink)}
+body{margin:0;background:var(--ink);color:var(--text);font-family:Arial,Helvetica,sans-serif;font-size:15px;overflow-x:hidden}
+a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}
+h1,h2,h3{font-weight:750;text-wrap:balance}
+:focus-visible{outline:2px solid var(--tangelo);outline-offset:3px}
+.gutter{padding-left:max(var(--gut),env(safe-area-inset-left,0px));padding-right:max(var(--gut),env(safe-area-inset-right,0px))}
+.eyebrow{font-size:10px;letter-spacing:.23em;text-transform:uppercase;font-weight:bold}
+.sectionLabel{display:flex;align-items:center;gap:13px}
+.sectionLabel:before{content:"";width:35px;height:2px;background:var(--red)}
+.section{position:relative;padding-block:clamp(70px,10vw,165px)}
+
+/* topbar */
+.topbar{position:fixed;z-index:80;top:env(safe-area-inset-top,0px);left:0;right:0;height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(#09090bcc,transparent);transition:background .3s}
+.topbar.scrolled{background:#101012ed;backdrop-filter:blur(12px)}
+.brand img{height:40px;width:auto;display:block}
+.topnav{display:flex;align-items:center;gap:clamp(14px,2.5vw,36px);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.topnav a:hover{color:var(--tangelo)}
+.smallcta{border:1px solid #666;padding:12px 17px;border-radius:30px}
+.smallcta:hover{border-color:var(--red)}
+
+/* botón principal */
+.buy{display:inline-flex;align-items:center;gap:14px;background:var(--red);color:#fff;padding:18px 28px;border-radius:40px;border:0;font-size:13px;font-weight:bold;letter-spacing:.06em;box-shadow:0 10px 30px rgba(217,34,0,.35);position:relative;overflow:hidden;will-change:transform;transition:box-shadow .3s}
+.buy:before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,var(--red),var(--tangelo));transform:translateX(-101%);transition:transform .45s cubic-bezier(.19,1,.22,1)}
+.buy>*{position:relative}
+.buy:hover:before,.buy:focus-visible:before{transform:none}
+.buy:hover{box-shadow:0 14px 40px rgba(243,80,10,.5)}
+.buy .arr{transition:transform .35s cubic-bezier(.19,1,.22,1)}
+.buy:hover .arr{transform:translate(3px,-3px) rotate(45deg)}
+.buyNote{font-size:12px;color:#c9c6cc;line-height:1.5;max-width:420px;margin:14px 0 0}
+
+/* hero */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:end;overflow:hidden;background:#09090b}
+.heroPhoto{position:absolute;inset:0 0 0 38%;background:url(lian.jpg) center 30%/cover;filter:brightness(.8)}
+.heroPhoto:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#09090b 0%,#09090bb3 22%,transparent 55%),linear-gradient(0deg,#09090b 0%,transparent 35%)}
+.heroGlow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(40% 50% at 70% 35%,rgba(217,34,0,.28),transparent 70%)}
+.heroText{position:relative;z-index:2;padding-block:140px 90px;min-width:0}
+.hero h1{font-size:clamp(52px,8.4vw,140px);line-height:.92;letter-spacing:-.07em;margin:26px 0 26px}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero .lead{font-size:clamp(16px,1.6vw,21px);line-height:1.5;color:#d2cfd4;max-width:520px;margin:0 0 36px}
+.price{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:28px}
+.price strong{font-size:clamp(54px,6vw,92px);letter-spacing:-.06em;line-height:1;font-variant-numeric:tabular-nums}
+.price strong small{font-size:.3em;letter-spacing:.04em;margin-left:6px;color:#d2cfd4}
+.price s{font-size:20px;color:#8f8c94}
+.badge{font-size:10px;letter-spacing:.18em;font-weight:bold;background:var(--red);color:#fff;padding:7px 11px;border-radius:30px}
+.heroMeta{position:absolute;z-index:2;right:max(var(--gut),env(safe-area-inset-right,0px));bottom:40px;display:flex;gap:28px;font-size:11px;letter-spacing:.14em;color:#d2cfd4}
+.heroMeta b{display:block;font-size:22px;letter-spacing:-.03em;color:#fff;margin-bottom:6px}
+
+/* carrusel */
+.reel{background:#09090b;padding:30px 0 90px;overflow:hidden}
+.reelLabel{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#c0bec2}
+.laneViewport{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.lane{display:flex;gap:13px;width:max-content;animation:marquee 70s linear infinite}
+.tile{height:clamp(205px,22vw,300px);aspect-ratio:9/16;border-radius:12px;overflow:hidden;flex-shrink:0;background:#25252c;position:relative}
+.tile video{width:100%;height:100%;object-fit:cover;display:block;animation:drift 9s ease-in-out infinite alternate}
+.tile:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 50%,#0007)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+@keyframes drift{from{transform:scale(1.02) translateX(-1%)}to{transform:scale(1.15) translateX(2%)}}
+
+/* frase */
+.statement{min-height:70vh;display:flex;align-items:center;background:var(--ink)}
+.statement h2{font-size:clamp(44px,7vw,117px);line-height:.99;letter-spacing:-.066em;margin:24px 0 30px;max-width:1100px}
+.statement p{max-width:640px;color:#c1bfc2;font-size:clamp(16px,1.8vw,22px);line-height:1.5}
+.accentline{height:3px;width:52px;background:var(--red)}
+
+/* módulos */
+.modules{background:var(--paper);color:#111;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:6vw;align-items:start}
+.modules>div{min-width:0}
+.modHead{position:sticky;top:120px}
+.modules h2{font-size:clamp(40px,5.4vw,88px);line-height:1.02;letter-spacing:-.07em;margin:26px 0}
+.modules .intro{font-size:clamp(14px,1.3vw,18px);max-width:460px;line-height:1.55;color:#565656}
+.mod{position:relative;padding:32px 0;display:grid;grid-template-columns:110px minmax(0,1fr) 24px;gap:20px;align-items:start}
+.mod:last-child{border-bottom:1px solid #b9b9b6}
+.mLine,.mLine2{position:absolute;left:0;right:0;top:0;height:1px;background:#b9b9b6;transform-origin:left}
+.mLine2{background:var(--red);height:2px;top:-1px;transform:scaleX(0);transition:transform .55s cubic-bezier(.19,1,.22,1)}
+.mNum{font-size:10px;letter-spacing:.2em;font-weight:bold;color:#777;padding-top:9px}
+.mod h3{font-size:clamp(22px,2.4vw,36px);letter-spacing:-.045em;margin:0 0 12px;transition:transform .5s cubic-bezier(.19,1,.22,1)}
+.mod p{margin:0;font-size:15px;line-height:1.6;color:#4a4a4a;max-width:560px}
+.mod .tm{display:inline-block;margin-top:14px;font-size:10px;letter-spacing:.16em;font-weight:bold;color:var(--red)}
+.mArrow{font-size:20px;color:var(--red);opacity:0;transform:translate(-14px,6px);transition:opacity .35s,transform .5s cubic-bezier(.19,1,.22,1);padding-top:6px}
+.mod:hover .mLine2{transform:scaleX(1)}
+.mod:hover h3{transform:translateX(10px)}
+.mod:hover .mArrow{opacity:1;transform:none}
+.mod:hover .mNum{color:var(--red)}
+
+/* beneficios */
+.benefits{background:var(--ink2)}
+.benefits h2{font-size:clamp(40px,5.3vw,88px);line-height:1.02;letter-spacing:-.06em;margin:24px 0 55px;max-width:900px}
+.bGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:17px}
+.bCard{grid-column:span 2;background:#18181c;border:1px solid #2a2a2f;padding:36px 32px;min-height:270px;display:flex;flex-direction:column;justify-content:space-between;gap:26px;position:relative;overflow:hidden;min-width:0;transition:border-color .4s}
+.bCard:nth-child(4),.bCard:nth-child(5){grid-column:span 3}
+.bCard:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle 260px at var(--bx,-300px) var(--by,-300px),rgba(217,34,0,.22),transparent 70%);opacity:0;transition:opacity .4s}
+.bCard:hover{border-color:#5a1d14}.bCard:hover:before{opacity:1}
+.bCard>*{position:relative}
+.bBig{font-size:clamp(40px,4.4vw,68px);line-height:1;letter-spacing:-.06em;font-weight:750}
+.bBig span{color:var(--red)}
+.bCard h3{font-size:clamp(19px,1.8vw,24px);letter-spacing:-.03em;margin:0 0 10px}
+.bCard p{margin:0;font-size:14px;line-height:1.6;color:#a9a6af}
+
+/* instructor */
+.teacher{background:var(--ink);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(35px,7vw,110px);align-items:center}
+.teacher>div{min-width:0}
+.tPhoto{aspect-ratio:4/5;max-width:100%;border-radius:3px;overflow:hidden;background:#111}
+.tPhoto video{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.9)}
+.teacher h2{font-size:clamp(38px,4.8vw,80px);line-height:1.02;letter-spacing:-.06em;margin:24px 0}
+.teacher p{max-width:600px;line-height:1.7;color:var(--muted);font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:45px;border-top:1px solid #49494e;padding-top:22px}
+.stat strong{font-size:clamp(31px,4vw,62px);line-height:1;display:block;letter-spacing:-.05em}
+.stat span{font-size:11px;color:#a2a0aa;line-height:1.5;display:block;margin-top:11px}
+
+/* oferta */
+.offer{background:var(--paper);color:#111}
+.offerCard{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);background:#17171b;color:#fff;overflow:hidden}
+.offerL{padding:clamp(30px,5vw,75px);min-width:0}
+.offerL h2{font-size:clamp(36px,4.6vw,76px);line-height:1.02;letter-spacing:-.06em;margin:20px 0 28px}
+.incl{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.incl li{display:grid;grid-template-columns:22px 1fr;gap:12px;font-size:15px;line-height:1.5;color:#d5d2d8}
+.incl li:before{content:"✓";color:var(--red);font-weight:bold}
+.offerR{padding:clamp(30px,5vw,75px);background:linear-gradient(160deg,#5A0006,#920004 45%,#D92200);display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:0}
+.offerR .price strong{color:#fff}
+.offerR .price s{color:#ffb3a3}
+.offerR .buy{background:#fff;color:#111;box-shadow:0 12px 30px #0005}
+.offerR .buy:before{background:#111}
+.offerR .buy:hover{color:#fff}
+.offerR .buyNote{color:#ffd9cf}
+.fomo{margin-top:22px;font-size:13px;color:#ffe2da;line-height:1.55;border-top:1px solid #ffffff40;padding-top:18px}
+
+.wl{position:fixed;inset:0;z-index:150;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));background:rgba(5,5,7,.82);backdrop-filter:blur(10px)}
+.wlCard{position:relative;width:min(560px,100%);background:linear-gradient(160deg,#5A0006,#920004 45%,#D92200);padding:clamp(28px,5vw,52px);color:#fff;box-shadow:0 30px 90px #000a}
+.wlCard h2{font-size:clamp(30px,4vw,48px);line-height:1.02;letter-spacing:-.05em;margin:14px 0 16px}
+.wlCard p{margin:0 0 26px;line-height:1.6;color:#ffe2da;font-size:15px}
+.wlCard .buy{background:#fff;color:#111;box-shadow:0 12px 30px #0005}.wlCard .buy:before{background:#111}.wlCard .buy:hover{color:#fff}
+.wlField{display:flex;flex-direction:column;gap:7px;margin-bottom:16px}
+.wlField label{font-size:11px;letter-spacing:.07em;color:#ffe2da}
+.wlField input{width:100%;background:#2a0306aa;border:1px solid #ffffff4d;color:#fff;border-radius:2px;padding:14px 12px;font:inherit;outline:none}
+.wlField input::placeholder{color:#ffc9bb99}
+.wlField input:focus{border-color:#fff;background:#2a0306}
+.wlField input[aria-invalid="true"]{border-color:#ffd24a}
+.wlErr{margin:0 0 16px!important;font-size:13px!important;color:#ffe9a8!important}
+#wlForm .buy{margin-top:6px}
+.wlCard{max-height:calc(100vh - 32px);overflow:auto}
+.wlCard .eyebrow{padding-right:46px;line-height:1.6}
+.wlSave{margin:18px 0 0!important;font-size:13px!important;color:#ffe2da!important}
+.wlSave.ok{color:#fff!important;font-weight:bold}
+.wlSave.bad{color:#ffe9a8!important}
+.wlSave button{margin-left:8px;background:none;border:1px solid #ffe9a8;color:#ffe9a8;border-radius:30px;padding:5px 12px;font-size:12px}
+.wlCard .wlSmall{margin:16px 0 0;font-size:12px;color:#ffc9bb}
+.wlCheck{width:52px;height:52px;border-radius:50%;background:#fff;color:var(--red);display:grid;place-items:center;font-size:26px;font-weight:bold;margin-bottom:22px}
+.wlClose{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid #ffffff55;background:none;color:#fff}
+.wlClose:hover{background:#fff;color:#111}
+.footer{padding-block:28px;background:#070709;border-top:1px solid #232326;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:11px;color:#999}
+
+/* barra fija móvil */
+.mbar{position:fixed;z-index:70;left:0;right:0;bottom:0;display:none;align-items:center;justify-content:space-between;gap:12px;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:#101012f2;backdrop-filter:blur(12px);border-top:1px solid #2a2a2f;transform:translateY(110%);transition:transform .4s}
+.mbar.on{transform:none}
+.mbar b{font-size:22px;letter-spacing:-.04em}.mbar s{color:#8f8c94;font-size:13px;margin-left:8px}
+.mbar .buy{padding:13px 18px;font-size:11px}
+
+.cursorRing{position:fixed;left:0;top:0;width:26px;height:26px;border:1.5px solid var(--tangelo);border-radius:50%;pointer-events:none;z-index:140;opacity:0;transition:width .22s,height .22s,opacity .22s,background-color .22s}
+.cursorRing.active{width:54px;height:54px;border-color:var(--red);background:rgba(217,34,0,.12)}
+
+@media(pointer:coarse){.cursorRing{display:none}}
+
+.rw{display:inline}
+@media(max-width:850px){
+ .topnav a:not(.smallcta){display:none}
+ .hero{grid-template-columns:1fr;align-items:end}
+ .heroPhoto{inset:0 0 35% 0;background-position:center 20%}
+ .heroPhoto:after{background:linear-gradient(0deg,#09090b 2%,#09090bcc 25%,transparent 60%)}
+ .heroText{padding-block:46vh 60px}
+ .heroMeta{position:static;padding:0 max(var(--gut),env(safe-area-inset-left,0px)) 40px;grid-column:1}
+ .modules,.teacher,.offerCard{grid-template-columns:1fr}
+ .modHead{position:static}
+ .mod{grid-template-columns:1fr;gap:8px}.mArrow{display:none}
+ .bGrid{grid-template-columns:1fr}.bCard,.bCard:nth-child(4),.bCard:nth-child(5){grid-column:auto;min-height:0}
+ .teacher .tPhoto{order:-1;aspect-ratio:auto;height:440px}
+ .mbar{display:flex}
+ .footer{padding-bottom:110px}
+}
+@media(max-width:480px){.brand img{height:32px}.smallcta{padding:10px 14px}.stats{gap:9px}.stat strong{font-size:34px}.heroMeta{gap:18px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.lane,.tile video{animation:none!important}}
+</style></head>
+<body>
+<div class="cursorRing" id="cursorRing" aria-hidden="true"></div>
+
+<header class="topbar gutter" id="topbar">
+ <a href="index.html" class="brand" aria-label="Volver al inicio de Bambino Lian"><img src="marca-director.webp" alt="Bambino Director" width="1964" height="773"></a>
+ <nav class="topnav"><a href="index.html">← Inicio</a><a href="#modulos">Módulos</a><a href="#beneficios">Beneficios</a><a href="#inscripcion" class="smallcta">Inscribirme · $17</a></nav>
+</header>
+
+<main>
+<section class="hero">
+ <div class="heroPhoto" role="img" aria-label="Lian sentado en una butaca de cine"></div>
+ <div class="heroGlow" aria-hidden="true"></div>
+ <div class="heroText gutter">
+  <div class="sectionLabel eyebrow">FORMACIÓN · CURSO PREGRABADO</div>
+  <h1>Método<br><em>CineIA</em> Pro</h1>
+  <p class="lead">Aprende paso a paso a crear comerciales y spots cinematográficos con inteligencia artificial: locación, personaje, producto y video final en 4K.</p>
+  <div class="price"><strong>$17<small>USD</small></strong><s>$67 USD</s><span class="badge">−75% LANZAMIENTO</span></div>
+  <a class="buy waitlist" href="#inscripcion"><span>QUIERO INSCRIBIRME</span><span class="arr">↗</span></a>
+ </div>
+ <div class="heroMeta"><div><b>5</b>MÓDULOS</div><div><b>2 h</b>DE IDEA A VIDEO</div><div><b>4K</b>ENTREGA FINAL</div></div>
+</section>
+
+<section class="reel"><div class="reelLabel gutter"><span>Lo que vas a poder crear</span></div><div class="laneViewport"><div class="lane" id="lane"></div></div></section>
+
+<section class="section statement gutter"><div><div class="accentline"></div><div class="eyebrow" style="margin-top:24px;color:#aaa">SIN CÁMARA · SIN LOCACIÓN · SIN ACTORES</div><h2>Un comercial de cine en 2 horas, no en semanas.</h2><p>CineIA Pro te enseña el flujo completo que uso para producir comerciales con IA, desde encontrar la locación hasta entregar el video final.</p></div></section>
+
+<section class="section modules gutter" id="modulos">
+ <div class="modHead"><div class="sectionLabel eyebrow">EL MÉTODO</div><h2>Cinco módulos. Un comercial terminado.</h2><p class="intro">Cada módulo es una clase grabada que muestra, paso a paso, un proceso real de producción. Lo ves a tu ritmo y al final tienes el flujo completo, no solo la teoría.</p></div>
+ <div class="modList">
+  <article class="mod"><span class="mLine" aria-hidden="true"></span><span class="mLine2" aria-hidden="true"></span><div class="mNum">MÓDULO 1</div><div><h3>Location Scout IA</h3><p>Cómo encontrar y generar la locación ideal sin salir de casa. Generas una locación real, paso a paso.</p></div><span class="mArrow" aria-hidden="true">↗</span></article>
+  <article class="mod"><span class="mLine" aria-hidden="true"></span><span class="mLine2" aria-hidden="true"></span><div class="mNum">MÓDULO 2</div><div><h3>Casting Virtual</h3><p>Cómo crear un personaje con identidad consistente usando GPT Characters™ y generar su ficha de personaje.</p></div><span class="mArrow" aria-hidden="true">↗</span></article>
+  <article class="mod"><span class="mLine" aria-hidden="true"></span><span class="mLine2" aria-hidden="true"></span><div class="mNum">MÓDULO 3</div><div><h3>Product Placement IA</h3><p>Cómo integrar un producto de forma realista en la escena, con un ejemplo simple y directo.</p></div><span class="mArrow" aria-hidden="true">↗</span></article>
+  <article class="mod"><span class="mLine" aria-hidden="true"></span><span class="mLine2" aria-hidden="true"></span><div class="mNum">MÓDULO 4</div><div><h3>Dirección de Escena</h3><p>Juntamos personaje, locación y producto, construimos el prompt con GPT Seedance Director™ y generamos el video. Verás iteraciones reales, no solo el resultado perfecto.</p><span class="tm">EL BLOQUE MÁS IMPORTANTE</span></div><span class="mArrow" aria-hidden="true">↗</span></article>
+  <article class="mod"><span class="mLine" aria-hidden="true"></span><span class="mLine2" aria-hidden="true"></span><div class="mNum">MÓDULO 5</div><div><h3>Masterización 4K</h3><p>Llevamos el video final a 4K y lo revelamos completo: el momento en que ves tu comercial terminado.</p></div><span class="mArrow" aria-hidden="true">↗</span></article>
+ </div>
+</section>
+
+<section class="section benefits gutter" id="beneficios"><div class="sectionLabel eyebrow">POR QUÉ CINEIA PRO</div><h2>Calidad de producción, sin el costo de una producción.</h2>
+ <div class="bGrid">
+  <article class="bCard"><div class="bBig">$0<span>.</span></div><div><h3>Ahorro de costo</h3><p>Sin cámara, sin locación, sin equipo de rodaje ni actores. El mismo resultado por una fracción del costo de una producción tradicional.</p></div></article>
+  <article class="bCard"><div class="bBig">2<span>h</span></div><div><h3>Velocidad</h3><p>Un video cinematográfico terminado en 2 horas, no en semanas.</p></div></article>
+  <article class="bCard"><div class="bBig">1<span>:1</span></div><div><h3>Consistencia de personaje</h3><p>El problema más común en la IA generativa es que el personaje se deforma entre escenas. CineIA Pro lo resuelve con la Ficha de Personaje.</p></div></article>
+  <article class="bCard"><div class="bBig">4<span>K</span></div><div><h3>Calidad profesional</h3><p>Entregas en 4K, no un boceto ni una prueba de concepto.</p></div></article>
+  <article class="bCard"><div class="bBig">Hoy<span>.</span></div><div><h3>La ola de la IA no espera</h3><p>Quien no aprenda a producir con IA hoy se va a quedar atrás frente a quienes ya lo están haciendo.</p></div></article>
+ </div>
+</section>
+
+<section class="section teacher gutter"><div class="tPhoto" id="tPhoto"></div><div><div class="sectionLabel eyebrow">QUIÉN TE ENSEÑA</div><h2>Lian, director y editor audiovisual.</h2><p>Llevo una década produciendo y editando videos, y desde hace tres años integro la inteligencia artificial a mi forma de trabajar. CineIA Pro es el método que uso en mis propios comerciales, ordenado para que lo puedas aplicar desde el primer módulo.</p>
+ <div class="stats"><div class="stat"><strong>10</strong><span>Años de experiencia audiovisual</span></div><div class="stat"><strong>3</strong><span>Años integrando IA</span></div><div class="stat"><strong>100+</strong><span>Proyectos realizados con IA</span></div></div></div></section>
+
+<section class="section offer gutter" id="inscripcion"><div class="sectionLabel eyebrow">INSCRIPCIÓN</div>
+ <div class="offerCard" style="margin-top:40px">
+  <div class="offerL"><div class="eyebrow">QUÉ INCLUYE</div><h2>Todo el método CineIA Pro.</h2>
+   <ul class="incl"><li>5 módulos pregrabados para ver a tu ritmo</li><li>Location Scout, Casting Virtual y Product Placement con IA</li><li>Ficha de Personaje para mantener la identidad entre escenas</li><li>Construcción de prompts con GPT Seedance Director™</li><li>Flujo de masterización y entrega en 4K</li></ul></div>
+  <div class="offerR"><div class="eyebrow" style="color:#ffd9cf">PRECIO DE LANZAMIENTO</div>
+   <div class="price" style="margin:6px 0 18px"><strong>$17<small>USD</small></strong><s>$67 USD</s></div>
+   <a class="buy waitlist" href="#inscripcion"><span>INSCRIBIRME AHORA</span><span class="arr">↗</span></a>
+   <p class="fomo">Quien aprenda a producir con IA hoy llega primero. Este precio de lanzamiento no es permanente.</p></div>
+ </div>
+</section>
+</main>
+
+<footer class="footer gutter"><div>BAMBINO LIAN — MÉTODO CINEIA PRO</div><a href="index.html">← VOLVER AL INICIO</a></footer>
+<div class="wl" id="wl" role="dialog" aria-modal="true" aria-labelledby="wlTitle" hidden>
+ <div class="wlCard"><button type="button" class="wlClose" aria-label="Cerrar">✕</button>
+  <form id="wlForm" class="wlStep" novalidate>
+   <div class="eyebrow" style="color:#ffd9cf">MÉTODO CINEIA PRO · LISTA DE ESPERA</div>
+   <h2 id="wlTitle">Reserva tu lugar a $17 USD.</h2>
+   <p>Déjanos tus datos y entra a la comunidad de WhatsApp donde abriremos las inscripciones.</p>
+   <div class="wlField"><label for="wlName">Nombre completo</label><input id="wlName" name="nombre" required autocomplete="name" placeholder="Tu nombre y apellido"></div>
+   <div class="wlField"><label for="wlCountry">País</label><input id="wlCountry" name="pais" required list="wlCountries" autocomplete="country-name" placeholder="Escribe o elige tu país"><datalist id="wlCountries"><option value="Argentina"></option><option value="Bolivia"></option><option value="Chile"></option><option value="Colombia"></option><option value="Costa Rica"></option><option value="Cuba"></option><option value="Ecuador"></option><option value="El Salvador"></option><option value="España"></option><option value="Estados Unidos"></option><option value="Guatemala"></option><option value="Honduras"></option><option value="México"></option><option value="Nicaragua"></option><option value="Panamá"></option><option value="Paraguay"></option><option value="Perú"></option><option value="Puerto Rico"></option><option value="República Dominicana"></option><option value="Uruguay"></option><option value="Venezuela"></option></datalist></div>
+   <div class="wlField"><label for="wlEmail">Correo electrónico</label><input id="wlEmail" name="correo" type="email" required autocomplete="email" placeholder="nombre@correo.com"></div>
+   <p class="wlErr" id="wlErr" role="alert" hidden></p>
+   <a class="buy" id="wlSend" href="https://chat.whatsapp.com/DkhdrVN9HLGBeLbwEZfcm5?s=cl&amp;p=i&amp;iam=2" target="_blank" rel="noopener"><span>ENVIAR Y UNIRME</span><span class="arr">↗</span></a>
+  </form>
+  <div class="wlStep" id="wlDone" hidden>
+   <div class="wlCheck" aria-hidden="true">✓</div>
+   <div class="eyebrow" style="color:#ffd9cf">MÉTODO CINEIA PRO</div>
+   <h2 id="wlDoneTitle" tabindex="-1">¡Listo, <span id="wlFirst"></span>! Bienvenido a la lista de espera.</h2>
+   <p>Te llevamos a la comunidad de WhatsApp. Ahí compartiremos la fecha de apertura, el acceso al curso y el precio de lanzamiento de $17 USD.</p>
+   <a class="buy" href="https://chat.whatsapp.com/DkhdrVN9HLGBeLbwEZfcm5?s=cl&amp;p=i&amp;iam=2" target="_blank" rel="noopener"><span>ENTRAR A LA COMUNIDAD DE WHATSAPP</span><span class="arr">↗</span></a>
+   <p class="wlSave" id="wlSave" role="status"></p>
+   <p class="wlSmall">Si WhatsApp no se abrió, toca el botón de arriba.</p>
+  </div></div></div>
+<div class="mbar" id="mbar"><div><b>$17</b><s>$67</s></div><a class="buy" href="#inscripcion"><span>INSCRIBIRME</span><span class="arr">↗</span></a></div>
+
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const IDS=['17hs6IBXHLAROb6qBL27-dVHA1UyRtYUO','1qrCA1zcFym9h59jc41Ns1rxYYJrWy6XV','11dSIDdgKYMtW1JavvidlMlAfNv63JXXl','1ZUyIkxXXb2mVk6lA16JSQ_aWT5TsNwAF','1t8NIdH9D029WFBj22Ww0TWh7X2AdqOaH','1h66xxaOheo8hPLxS7QQxXNdEbJv_Y84N','1BwIfih8roDEvpZXefVzJHpOW6JV-bjCo','1Yaz2ycXNacfCroKlqyr0He-FSIfJhWym','13VeJAb0OxAQ6SY0yTo0bkK2SfKuPwdCt','1xcBVBV9ODm0rsDqSNfkUBEXvFYZy35Gz','1JbVNRnTYzlzmMII3kEu36YUCiesgLQcr','1nPlN7iswy6ePP7lZfnaOX0ZP9ovJqJ0s'];
+const mk=(id,wrap)=>{const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.preload='none';v.poster='p/'+id+'.jpg';v.dataset.src='v/'+id+'.mp4';v.setAttribute('aria-hidden','true');wrap.appendChild(v)};
+const lane=document.getElementById('lane');IDS.concat(IDS).forEach((id,i)=>{const t=document.createElement('div');t.className='tile';if(i>=IDS.length)t.setAttribute('aria-hidden','true');mk(id,t);lane.appendChild(t)});
+mk('1K4KsVUwxwxQVKisQ9eMdsQPQhXqn82Za',document.getElementById('tPhoto'));
+(function(){const vids=[...document.querySelectorAll('video[data-src]')];const run=v=>{if(reduce)return;if(!v.src)v.src=v.dataset.src;const p=v.play();if(p&&p.catch)p.catch(()=>{})};
+ if(!('IntersectionObserver' in window)){vids.forEach(run);return}
+ const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?run(e.target):e.target.pause()),{rootMargin:'100px 200px'});vids.forEach(v=>io.observe(v))})();
+const tb=document.getElementById('topbar'),mbar=document.getElementById('mbar'),ins=document.getElementById('inscripcion');
+addEventListener('scroll',()=>{tb.classList.toggle('scrolled',scrollY>30);const r=ins.getBoundingClientRect();mbar.classList.toggle('on',scrollY>innerHeight*.8&&r.top>innerHeight*.6)},{passive:true});
+// Supabase: guarda formularios (la clave pública solo permite insertar)
+const SB_URL='https://saorqnfxeuxukaufmkne.supabase.co',SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhb3JxbmZ4ZXV4dWthdWZta25lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU0ODIyNDIsImV4cCI6MjExMTA1ODI0Mn0.4n_yxp7gqwKnKLD7q_2NQ740cbVQg0PAKzaRhUOy2ss';
+function sbInsert(table,row){row.user_agent=(navigator.userAgent||'').slice(0,400);
+ return fetch(SB_URL+'/rest/v1/'+table,{method:'POST',keepalive:true,headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)})
+  .then(r=>r.ok||r.status===409).catch(()=>false)}
+// Lista de espera: formulario -> bienvenida -> comunidad de WhatsApp
+(function(){const m=document.getElementById('wl'),form=document.getElementById('wlForm'),done=document.getElementById('wlDone'),err=document.getElementById('wlErr'),send=document.getElementById('wlSend');
+ const F=['wlName','wlCountry','wlEmail'].map(id=>document.getElementById(id));
+ const anim=()=>{if(window.gsap&&!reduce)gsap.fromTo('.wlCard',{y:40,opacity:0,scale:.96},{y:0,opacity:1,scale:1,duration:.7,ease:'power3.out'})};
+ const open=()=>{form.hidden=false;done.hidden=true;err.hidden=true;F.forEach(f=>f.removeAttribute('aria-invalid'));m.hidden=false;document.body.style.overflow='hidden';anim();setTimeout(()=>F[0].focus(),60)};
+ const close=()=>{m.hidden=true;document.body.style.overflow=''};
+ document.querySelectorAll('.waitlist').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();open()}));
+ const check=()=>{const msgs={wlName:'Escribe tu nombre completo.',wlCountry:'Escribe tu país.',wlEmail:'Escribe un correo válido, por ejemplo nombre@correo.com.'};let first=null;
+  F.forEach(f=>{f.value=f.value.trim();const bad=!f.value||(f.id==='wlName'&&f.value.length<3)||(f.type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.value));f.setAttribute('aria-invalid',bad?'true':'false');if(bad&&!first)first=f});
+  if(first){err.textContent=msgs[first.id];err.hidden=false;first.focus();return false}err.hidden=true;return true};
+ const sv=document.getElementById('wlSave');
+ const save=()=>{sv.className='wlSave';sv.textContent='Guardando tus datos…';
+  sbInsert('waitlist_cineia',{full_name:F[0].value,country:F[1].value,email:F[2].value.toLowerCase(),source:'cineia-pro'}).then(ok=>{
+   if(ok){sv.className='wlSave ok';sv.textContent='✓ Tus datos quedaron registrados en la lista de espera.'}
+   else{sv.className='wlSave bad';sv.innerHTML='No pudimos guardar tus datos. <button type="button" id="wlRetry">Reintentar</button>';document.getElementById('wlRetry').onclick=save}})};
+ const finish=()=>{save();
+  document.getElementById('wlFirst').textContent=F[0].value.split(/\s+/)[0];form.hidden=true;done.hidden=false;anim();document.getElementById('wlDoneTitle').focus()};
+ // El botón Enviar es un enlace real a WhatsApp: si los datos están bien, se abre la comunidad y aquí se muestra la bienvenida
+ send.addEventListener('click',e=>{if(!check()){e.preventDefault();return}finish()});
+ form.addEventListener('submit',e=>{e.preventDefault();if(check()){send.click()}});
+ F.forEach(f=>f.addEventListener('input',()=>{if(f.getAttribute('aria-invalid')==='true')f.setAttribute('aria-invalid','false')}));
+ m.querySelector('.wlClose').addEventListener('click',close);m.addEventListener('click',e=>{if(e.target===m)close()});
+ addEventListener('keydown',e=>{if(e.key==='Escape'&&!m.hidden)close()})})();
+// Brillo rojo que sigue al cursor en las tarjetas de beneficios
+document.querySelectorAll('.bCard').forEach(c=>c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--bx',(e.clientX-r.left)+'px');c.style.setProperty('--by',(e.clientY-r.top)+'px')},{passive:true}));
+// Botones magnéticos
+if(!reduce&&matchMedia('(pointer:fine)').matches){document.querySelectorAll('.buy').forEach(b=>{const p=b.parentElement;
+ p.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);b.style.transform=Math.hypot(dx,dy)<150?`translate(${dx*.25}px,${dy*.35}px)`:''},{passive:true});
+ p.addEventListener('pointerleave',()=>b.style.transform='')})}
+// Cursor
+(function(){const ring=document.getElementById('cursorRing');if(!matchMedia('(pointer:fine)').matches)return;
+ addEventListener('mousemove',e=>{ring.style.opacity='1';ring.style.transform=`translate(${e.clientX}px,${e.clientY}px) translate(-50%,-50%)`},{passive:true});
+ document.addEventListener('mouseover',e=>ring.classList.toggle('active',!!e.target.closest('a,button')))})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(function(){if(reduce||!window.gsap||!window.ScrollTrigger)return;gsap.registerPlugin(ScrollTrigger);
+ const ACCENT='#D92200',KEEP={'.statement h2':['2','horas,'],'.modules h2':['terminado.']};
+ // Entrada del hero
+ gsap.from('.hero .sectionLabel,.hero h1,.hero .lead,.hero .price,.hero .buy,.heroMeta>div',{opacity:0,y:40,filter:'blur(8px)',duration:1.1,ease:'power3.out',stagger:.09,delay:.15,clearProps:'filter'});
+ gsap.fromTo('.heroPhoto',{scale:1.12},{scale:1,duration:2,ease:'power2.out'});
+ gsap.to('.heroPhoto',{yPercent:12,ease:'none',scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:.6}});
+ // Palabras que se encienden
+ document.querySelectorAll('.statement h2,.modules h2,.benefits h2,.teacher h2,.offerL h2').forEach(el=>{const m=getComputedStyle(el).color.match(/[\d.]+/g);
+  const full=`rgb(${m[0]},${m[1]},${m[2]})`,dim=`rgba(${m[0]},${m[1]},${m[2]},.2)`,out=[];
+  [...el.childNodes].forEach(n=>{if(n.nodeType!==3)return;const f=document.createDocumentFragment();n.textContent.split(/(\s+)/).forEach(p=>{if(!p)return;if(/^\s+$/.test(p)){f.appendChild(document.createTextNode(p));return}const w=document.createElement('span');w.className='rw';w.textContent=p;f.appendChild(w);out.push(w)});n.replaceWith(f)});
+  const keep=Object.entries(KEEP).find(([s])=>el.matches(s));gsap.set(out,{color:dim});
+  const tl=gsap.timeline({scrollTrigger:{trigger:el,start:'top 85%',end:'bottom 45%',scrub:.6}});
+  out.forEach((w,i)=>{const fin=keep&&keep[1].includes(w.textContent)?ACCENT:full;tl.to(w,{color:ACCENT,duration:.45},i*.12).to(w,{color:fin,duration:.55},i*.12+.5)})});
+ // Aparición con difuminado
+ const be=gsap.utils.toArray('.section .sectionLabel,.statement p,.modules .intro,.bCard,.teacher p,.stat,.incl li,.offerR>*');gsap.set(be,{opacity:.2,filter:'blur(8px)',y:18});
+ ScrollTrigger.batch(be,{start:'top 90%',once:true,onEnter:b=>gsap.to(b,{opacity:1,filter:'blur(0px)',y:0,duration:1.1,ease:'power2.out',stagger:.08,overwrite:true,clearProps:'filter,transform'})});
+ // Módulos: líneas que se dibujan y títulos que entran
+ gsap.utils.toArray('.mod').forEach(m=>{gsap.set(m.querySelector('.mLine'),{scaleX:0});gsap.set(m.querySelectorAll('.mNum,h3,p,.tm'),{opacity:0,x:-30});
+  gsap.timeline({scrollTrigger:{trigger:m,start:'top 85%',once:true}}).to(m.querySelector('.mLine'),{scaleX:1,duration:1,ease:'power3.inOut'}).to(m.querySelectorAll('.mNum,h3,p,.tm'),{opacity:1,x:0,duration:.9,ease:'power3.out',stagger:.07,clearProps:'transform,opacity'},.2)});
+ // Contadores
+ document.querySelectorAll('.stat strong').forEach(s=>{const t=s.textContent,n=parseInt(t),suf=t.replace(/\d+/,'');const o={v:0};
+  gsap.to(o,{v:n,duration:1.6,ease:'power2.out',scrollTrigger:{trigger:s,start:'top 90%',once:true},onUpdate:()=>s.textContent=Math.round(o.v)+suf})});
+ addEventListener('load',()=>ScrollTrigger.refresh());
+})();
+</script>
+</body></html>
