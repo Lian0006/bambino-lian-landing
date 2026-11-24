@@ -9,3 +9,7 @@ Sitio estático publicado en **https://bambinolian.com** (Vercel, proyecto `bamb
 
 Los formularios guardan en Supabase (`waitlist_cineia` y `contact_requests`) con la clave pública,
 que solo permite insertar. Cada push a `main` se publica automáticamente en Vercel.
+
+## Cómo publicar cambios
+
+Edita los archivos y haz push a `main`: Vercel publica solo en bambinolian.com en ~1 minuto.
