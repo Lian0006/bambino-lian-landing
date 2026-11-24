@@ -277,9 +277,15 @@ h1,h2,h3{font-weight:750;text-wrap:balance}
 <script>
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const IDS=['17hs6IBXHLAROb6qBL27-dVHA1UyRtYUO','1qrCA1zcFym9h59jc41Ns1rxYYJrWy6XV','11dSIDdgKYMtW1JavvidlMlAfNv63JXXl','1ZUyIkxXXb2mVk6lA16JSQ_aWT5TsNwAF','1t8NIdH9D029WFBj22Ww0TWh7X2AdqOaH','1h66xxaOheo8hPLxS7QQxXNdEbJv_Y84N','1BwIfih8roDEvpZXefVzJHpOW6JV-bjCo','1Yaz2ycXNacfCroKlqyr0He-FSIfJhWym','13VeJAb0OxAQ6SY0yTo0bkK2SfKuPwdCt','1xcBVBV9ODm0rsDqSNfkUBEXvFYZy35Gz','1JbVNRnTYzlzmMII3kEu36YUCiesgLQcr','1nPlN7iswy6ePP7lZfnaOX0ZP9ovJqJ0s'];
-const mk=(id,wrap)=>{const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.preload='none';v.poster='p/'+id+'.jpg';v.dataset.src='v/'+id+'.mp4';v.setAttribute('aria-hidden','true');wrap.appendChild(v)};
+const mk=(id,wrap)=>{const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.preload='none';v.dataset.poster='p2/'+id+'.jpg';v.dataset.src='v2/'+id+'.mp4';v.setAttribute('aria-hidden','true');wrap.appendChild(v)};
 const lane=document.getElementById('lane');IDS.concat(IDS).forEach((id,i)=>{const t=document.createElement('div');t.className='tile';if(i>=IDS.length)t.setAttribute('aria-hidden','true');mk(id,t);lane.appendChild(t)});
 mk('1K4KsVUwxwxQVKisQ9eMdsQPQhXqn82Za',document.getElementById('tPhoto'));
+// Portadas: se cargan cuando su fila se acerca a la pantalla
+(function(){const vs=[...document.querySelectorAll('video[data-poster]')];const set=v=>{if(!v.poster)v.poster=v.dataset.poster};
+ if(!('IntersectionObserver' in window)){vs.forEach(set);return}
+ const groups=new Map();vs.forEach(v=>{const g=v.closest('.laneViewport,#showSlides,#tPhoto')||v;if(!groups.has(g))groups.set(g,[]);groups.get(g).push(v)});
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){groups.get(e.target).forEach(set);io.unobserve(e.target)}}),{rootMargin:'900px 0px'});
+ groups.forEach((_,g)=>io.observe(g))})();
 (function(){const vids=[...document.querySelectorAll('video[data-src]')];const run=v=>{if(reduce)return;if(!v.src)v.src=v.dataset.src;const p=v.play();if(p&&p.catch)p.catch(()=>{})};
  if(!('IntersectionObserver' in window)){vids.forEach(run);return}
  const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?run(e.target):e.target.pause()),{rootMargin:'100px 200px'});vids.forEach(v=>io.observe(v))})();

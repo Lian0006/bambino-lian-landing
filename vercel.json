@@ -1,7 +1,7 @@
 {
   "cleanUrls": true,
   "headers": [
-    { "source": "/(v|p)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
+    { "source": "/(v|p|v2|p2)/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },
     { "source": "/(.*)\\.(webp|jpg)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000" }] }
   ]
 }

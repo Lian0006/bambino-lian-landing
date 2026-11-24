@@ -294,7 +294,7 @@ const pretty=t=>t?t.toLowerCase().replace(/\s+/g,' ').replace(/(^|\s)\S/g,m=>m.t
 
 // Showfilm del hero
 (function(){const s=document.getElementById('showSlides');const pick=['1xlTM_uA9HMHipajXeYL1ViheWTJuXhMs','1C38T2I9r-EC1kxq-_aBTaQLz9rxXuHCy','1aZjloDd7PLjd46Pwgh-uFZPP71cJvh-2','1fwNxQ8sBCTvJmFQuMn0_8lTuCFr9py18','1Yaz2ycXNacfCroKlqyr0He-FSIfJhWym'];
- pick.forEach(id=>{const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.preload='none';v.poster='p/'+id+'.jpg';v.dataset.src='v/'+id+'.mp4';s.appendChild(v)});
+ pick.forEach(id=>{const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.preload='none';v.dataset.poster='p2/'+id+'.jpg';v.dataset.src='v2/'+id+'.mp4';s.appendChild(v)});
 
 })();
 
@@ -327,10 +327,16 @@ LANES.forEach(([key,label],r)=>{
  for(let i=0;i<n*2;i++){const it=list[i%n];const dup=i>=src.length;
   const b=document.createElement('div');b.className='filmTile';
   if(dup)b.setAttribute('aria-hidden','true');
-  const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.preload='none';v.disablePictureInPicture=true;v.poster='p/'+it.id+'.jpg';v.dataset.src='v/'+it.id+'.mp4';
+  const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.setAttribute('muted','');v.setAttribute('playsinline','');v.preload='none';v.disablePictureInPicture=true;v.dataset.poster='p2/'+it.id+'.jpg';v.dataset.src='v2/'+it.id+'.mp4';
   b.appendChild(v);lane.appendChild(b)}
  vp.appendChild(lane);a.appendChild(vp);port.appendChild(a)});
 
+// Portadas: se cargan cuando su fila se acerca a la pantalla
+(function(){const vs=[...document.querySelectorAll('video[data-poster]')];const set=v=>{if(!v.poster)v.poster=v.dataset.poster};
+ if(!('IntersectionObserver' in window)){vs.forEach(set);return}
+ const groups=new Map();vs.forEach(v=>{const g=v.closest('.laneViewport,#showSlides,#tPhoto')||v;if(!groups.has(g))groups.set(g,[]);groups.get(g).push(v)});
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){groups.get(e.target).forEach(set);io.unobserve(e.target)}}),{rootMargin:'900px 0px'});
+ groups.forEach((_,g)=>io.observe(g))})();
 // Videos: carga diferida y reproducción solo en pantalla
 (function(){const vids=[...document.querySelectorAll('video[data-src]')];window.__vPaused=reduceMotion;const vis=new Set();
  const run=v=>{if(window.__vPaused||!vis.has(v))return;if(!v.src)v.src=v.dataset.src;const p=v.play();if(p&&p.catch)p.catch(()=>{})};
